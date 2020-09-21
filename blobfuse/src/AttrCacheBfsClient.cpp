@@ -392,9 +392,11 @@ AttrCacheBfsClient::List(std::string continuation, const std::string prefix, con
     if (max_results == 2 && 
         resp.m_items.size() == 0)
     {
-        BfsFileProperty ret_property = BfsFileProperty(true);
         std::shared_ptr<AttrCacheItem> cache_item = attr_cache.get_blob_item(prefix);
-        cache_item->SetProperties(ret_property);
+        SET_PROP_FLAG(cache_item->flags, PROP_FLAG_NOT_EXISTS);
+        SET_PROP_FLAG(cache_item->flags, PROP_FLAG_VALID);
+        cache_item->clearMetaFlags();
+        cache_item->setCacheTime();
         SET_PROP_FLAG(cache_item->flags, PROP_FLAG_CONFIRMED);
     }
 
