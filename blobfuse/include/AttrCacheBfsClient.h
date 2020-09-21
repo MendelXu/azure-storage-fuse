@@ -43,6 +43,7 @@ public:
 
     void SetProperties(BfsFileProperty &props)
     {
+        last_cached         = time(NULL);
         flags               = 0;
         last_modified       = props.last_modified;
         size                = props.size;
@@ -106,10 +107,20 @@ public:
         }
         SET_PROP_FLAG(flags, PROP_FLAG_META_RETREIVED);
     }
+    time_t getCacheTime()
+    {
+        return last_cached;
+    }
+
+    void setCacheTime() 
+    {
+        last_cached = time(NULL);
+    }
  
     //std::mutex m_mutex;
     
     time_t last_modified;
+    time_t last_cached;
     unsigned long long size;
     mode_t m_file_mode;
     uint32_t flags;
@@ -164,6 +175,11 @@ public:
     StorageBfsClientBase(opt)
     {
         noSymlinks = opt.noSymlinks;
+
+        // Default attribute cache timeout 15 min
+        // higher because accounts with huge list of files takes time in listing and till then
+        // we want the attributes retreived using listing to be valid.
+        cache_time_out = opt.attrCacheTimeoutInSeconds;
         if (opt.useADLS)
         {
             isAdlsMode = true;
@@ -236,6 +252,8 @@ public:
     ///<returns>BfsFileProperty object which contains the property details of the file</returns>
     BfsFileProperty GetProperties(std::string pathName, bool type_known = false) override;
     BfsFileProperty GetFileProperties(const std::string pathName, bool cache_only = true);
+    void InvalidateFileAttributes(const std::string pathName);
+
     void GetExtraProperties(const std::string pathName, BfsFileProperty &prop) override;
     ///<summary>
     /// Determines whether or not a path (file or directory) exists or not
@@ -275,5 +293,6 @@ public:
         AttrCache attr_cache;
         bool isAdlsMode;
         bool noSymlinks;
+        unsigned int cache_time_out;
 };
 #endif //ATTRCACHEBFSCLIENTBASE_H

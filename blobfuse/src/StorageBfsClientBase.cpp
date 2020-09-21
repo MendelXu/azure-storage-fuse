@@ -29,6 +29,11 @@ BfsFileProperty StorageBfsClientBase::GetFileProperties(const std::string /*path
     return BfsFileProperty();
 }
 
+void StorageBfsClientBase::InvalidateFileAttributes(const std::string /*pathName*/)
+{
+    return;
+}
+
 int StorageBfsClientBase::ensure_directory_path_exists_cache(const std::string & file_path)
 {
     char *pp;

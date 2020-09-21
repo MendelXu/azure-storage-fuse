@@ -53,6 +53,7 @@ struct configParams
     std::string tmpPath;
     std::string logLevel;
     int fileCacheTimeoutInSeconds;
+    unsigned int attrCacheTimeoutInSeconds;
     bool useHttps;
     bool useAttrCache;
     bool useADLS;
@@ -73,6 +74,7 @@ struct cmdlineOptions
     const char *config_file; // Connection to Azure Storage information (account name, account key, etc)
     const char *useHttps; // True if https should be used (defaults to false)
     const char *file_cache_timeout_in_seconds; // Timeout for the file cache (defaults to 120 seconds)
+    const char *attr_cache_timeout_in_seconds; // Timeout for the attr cache (defaults to 15 minutes)
     const char *container_name; //container to mount. Used only if config_file is not provided
     const char *log_level; // Sets the level at which the process should log to syslog.
     const char *useAttrCache; // True if the cache for blob attributes should be used.

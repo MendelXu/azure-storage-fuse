@@ -36,6 +36,7 @@ const struct fuse_opt option_spec[] =
     OPTION("--config-file=%s", config_file),
     OPTION("--use-https=%s", useHttps),
     OPTION("--file-cache-timeout-in-seconds=%s", file_cache_timeout_in_seconds),
+    OPTION("--attr-cache-timeout-in-seconds=%s", attr_cache_timeout_in_seconds),
     OPTION("--container-name=%s", container_name),
     OPTION("--log-level=%s", log_level),
     OPTION("--use-attr-cache=%s", useAttrCache),
@@ -328,7 +329,7 @@ void *azs_init(struct fuse_conn_info * conn)
     //  conn->want |= FUSE_CAP_WRITEBACK_CACHE | FUSE_CAP_EXPORT_SUPPORT; // TODO: Investigate putting this back in when we downgrade to fuse 2.9
 
     g_gc_cache = std::make_shared<gc_cache>(config_options.tmpPath, config_options.fileCacheTimeoutInSeconds);
-    g_gc_cache->run();
+    g_gc_cache->run(storage_client);
 
     if (config_options.authType == MSI_AUTH ||
         config_options.authType == SPN_AUTH)
@@ -767,6 +768,16 @@ int read_and_set_arguments(int argc, char *argv[], struct fuse_args *args)
     else
     {
         config_options.fileCacheTimeoutInSeconds = 120;
+    }
+
+    if (cmd_options.attr_cache_timeout_in_seconds != NULL)
+    {
+        std::string timeout(cmd_options.attr_cache_timeout_in_seconds);
+        config_options.attrCacheTimeoutInSeconds = stoi(timeout);
+    }
+    else
+    {
+        config_options.attrCacheTimeoutInSeconds = 0xffffffff;
     }
 
     if(cmd_options.use_adls != NULL)

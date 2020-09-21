@@ -11,6 +11,8 @@
 #include <BlobfuseConstants.h>
 #include "FileLockMap.h"
 
+#include <include/StorageBfsClientBase.h>
+
 extern struct configParams config_options;
 
 bool gc_cache::check_disk_space()
@@ -78,8 +80,9 @@ void gc_cache::addCacheBytes(std::string /*path*/, long int size)
     }
 }
 
-void gc_cache::run()
+void gc_cache::run(std::shared_ptr<StorageBfsClientBase> storage_client)
 {
+    client = storage_client;
     std::thread t1(std::bind(&gc_cache::run_gc_cache,this));
     t1.detach();
 }
@@ -152,6 +155,7 @@ void gc_cache::run_gc_cache()
                     }
                     else
                     {
+                        client->InvalidateFileAttributes(file.path.substr(1));
                         unlink(mntPath);
                         flock(fd, LOCK_UN);
                         

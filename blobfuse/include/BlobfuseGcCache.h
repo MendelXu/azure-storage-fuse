@@ -4,6 +4,9 @@
 #include <mutex>
 #include <deque>
 
+
+class StorageBfsClientBase;
+
 // deque to age cached files based on timeout
 struct file_to_delete
 {
@@ -19,9 +22,10 @@ public:
         cache_folder_path(cache_folder),
         file_cache_timeout_in_seconds(timeout),
         m_current_usage(0){}
-    void run();
+    void run(std::shared_ptr<StorageBfsClientBase> storage_client);
     void uncache_file(std::string path);
     void addCacheBytes(std::string path, long int size);
+
 
 private:
     bool disk_threshold_reached;
@@ -33,4 +37,5 @@ private:
     std::string cache_folder_path;
     int file_cache_timeout_in_seconds;
     unsigned long long m_current_usage;
+    std::shared_ptr<StorageBfsClientBase> client;
 };

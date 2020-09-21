@@ -26,6 +26,7 @@ void AttrCache::invalidate_dir_recursively(const std::string& path)
             // Let the cache be still valid but mark that file no more exists on the storage
             SET_PROP_FLAG(cache_item->flags, PROP_FLAG_VALID);
             SET_PROP_FLAG(cache_item->flags, PROP_FLAG_NOT_EXISTS);
+            cache_item->setCacheTime();
             cache_item->clearMetaFlags();
         }
     }
@@ -40,6 +41,7 @@ void AttrCache::invalidate_dir_recursively(const std::string& path)
                 // Let the cache be still valid but mark that file no more exists on the storage
                 SET_PROP_FLAG(cache_item->flags, PROP_FLAG_VALID);
                 SET_PROP_FLAG(cache_item->flags, PROP_FLAG_NOT_EXISTS);
+                cache_item->setCacheTime();
                 cache_item->clearMetaFlags();
             }
         }
@@ -129,6 +131,7 @@ void AttrCacheBfsClient::UploadFromFile(const std::string sourcePath, METADATA &
             cache_item->size = stbuf.st_size;
             cache_item->last_modified = time(NULL);
             CLEAR_PROP_FLAG(cache_item->flags, PROP_FLAG_NOT_EXISTS);
+            cache_item->setCacheTime();
             cache_item->parseMetaData(metadata);
         }
         else
@@ -157,6 +160,7 @@ void AttrCacheBfsClient::UploadFromStream(std::istream &sourceStream, const std:
 
         // Metadata vector is emptry to clean all flags which might have been set using metadata.
         cache_item->clearMetaFlags();
+        cache_item->setCacheTime();
         SET_PROP_FLAG(cache_item->flags, PROP_FLAG_META_RETREIVED);
     }
     return blob_client->UploadFromStream(sourceStream, blobName);
@@ -180,6 +184,7 @@ void AttrCacheBfsClient::UploadFromStream(std::istream &sourceStream, const std:
         cache_item->size = end - cur;
         cache_item->last_modified = time(NULL);
         CLEAR_PROP_FLAG(cache_item->flags, PROP_FLAG_NOT_EXISTS);
+        cache_item->setCacheTime();
         cache_item->parseMetaData(metadata);
     }
     return blob_client->UploadFromStream(sourceStream, blobName, metadata);
@@ -227,6 +232,7 @@ void AttrCacheBfsClient::DeleteFile(const std::string pathToDelete)
     if (IS_PROP_FLAG_SET(cache_item->flags, PROP_FLAG_CONFIRMED)) {
         SET_PROP_FLAG(cache_item->flags, PROP_FLAG_NOT_EXISTS);
         SET_PROP_FLAG(cache_item->flags, PROP_FLAG_VALID);
+        cache_item->setCacheTime();
         cache_item->clearMetaFlags();
     }
 }
@@ -254,7 +260,9 @@ BfsFileProperty AttrCacheBfsClient::GetProperties(std::string pathName, bool typ
                     cache_item->parseMetaData(prop.metadata);
                 }
             }
-            return cache_item->GetProperties();
+            if ((cache_time_out == 0xffffffff) || 
+                (time(NULL) - cache_item->getCacheTime()) <= cache_time_out)
+                return cache_item->GetProperties();
         }
     }
 
@@ -282,7 +290,9 @@ BfsFileProperty AttrCacheBfsClient::GetFileProperties(const std::string pathName
             (!IS_PROP_FLAG_SET(cache_item->flags, PROP_FLAG_NOT_EXISTS)) &&
             (!IS_PROP_FLAG_SET(cache_item->flags, PROP_FLAG_IS_DIR)))
         {
-            return cache_item->GetProperties();
+            if ((cache_time_out == 0xffffffff) ||
+                (time(NULL) - cache_item->getCacheTime()) <= cache_time_out)
+                return cache_item->GetProperties();
         }
     }
 
@@ -299,6 +309,21 @@ BfsFileProperty AttrCacheBfsClient::GetFileProperties(const std::string pathName
 
     return BfsFileProperty();
 }
+
+void AttrCacheBfsClient::InvalidateFileAttributes(const std::string pathName)
+{
+    std::shared_ptr<boost::shared_mutex> dir_mutex = attr_cache.get_dir_item(get_parent_str(pathName));
+    std::shared_ptr<AttrCacheItem> cache_item = attr_cache.get_blob_item(pathName);
+
+    boost::shared_lock<boost::shared_mutex> dirlock(*dir_mutex);
+    if (IS_PROP_FLAG_SET(cache_item->flags, PROP_FLAG_CONFIRMED)) {
+        CLEAR_PROP_FLAG(cache_item->flags, PROP_FLAG_CONFIRMED);
+        CLEAR_PROP_FLAG(cache_item->flags, PROP_FLAG_VALID);
+        cache_item->clearMetaFlags();
+    }
+    return;
+}
+
 
 int AttrCacheBfsClient::Exists(const std::string pathName)
 {
@@ -361,7 +386,18 @@ AttrCacheBfsClient::List(std::string continuation, const std::string prefix, con
     blob_client->List(continuation, prefix, delimiter, resp, max_results);
     if (errno != 0 || !configurations.cacheOnList)
         return errno;
+
     int errno_org = errno;
+
+    if (max_results == 2 && 
+        resp.m_items.size() == 0)
+    {
+        BfsFileProperty ret_property = BfsFileProperty(true);
+        std::shared_ptr<AttrCacheItem> cache_item = attr_cache.get_blob_item(prefix);
+        cache_item->SetProperties(ret_property);
+        SET_PROP_FLAG(cache_item->flags, PROP_FLAG_CONFIRMED);
+    }
+
     for (unsigned int i = 0; i < resp.m_items.size() && attr_cache.get_blob_item_len() < MAX_BLOB_CACHE_LEN; i++)
     {
         time_t last_mod = time(NULL);
