@@ -3,6 +3,7 @@
 #include <sys/utsname.h>
 
 bool gEnableLogsHttp;
+time_t globalTime = 0;
 
 std::string to_lower(std::string original) 
 {

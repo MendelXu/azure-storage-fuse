@@ -384,8 +384,8 @@ int DataLakeBfsClient::ChangeMode(const char *path, mode_t mode) {
     m_adls_client->set_file_access_control(configurations.containerName, pathStr.substr(1), accessControl);
     lstaterrno = errno;
 
-    UpdateBlobProperty(pathStr.substr(1), "last_change", std::to_string(time(NULL)));
-    globalTimes.lastChangeTime = time(NULL);
+    UpdateBlobProperty(pathStr.substr(1), "last_change", std::to_string(globalTime));
+    globalTimes.lastChangeTime = globalTime;
     
     std::string mntPathString = prepend_mnt_path_string(pathStr);
     int acc = access(mntPathString.c_str(), F_OK);

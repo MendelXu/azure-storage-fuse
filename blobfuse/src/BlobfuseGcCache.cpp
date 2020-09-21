@@ -14,6 +14,7 @@
 #include <include/StorageBfsClientBase.h>
 
 extern struct configParams config_options;
+extern time_t globalTime;
 
 bool gc_cache::check_disk_space()
 {
@@ -62,7 +63,7 @@ void gc_cache::uncache_file(std::string path)
 {
     file_to_delete file;
     file.path = path;
-    file.closed_time = time(NULL);
+    file.closed_time = globalTime;
 
     // lock before updating deque
     std::lock_guard<std::mutex> lock(m_deque_lock);
@@ -92,7 +93,6 @@ void gc_cache::run_gc_cache()
 {
 
     while(true){
-
         // lock the deque
         file_to_delete file;
         bool is_empty;
@@ -105,6 +105,9 @@ void gc_cache::run_gc_cache()
             }
         }
 
+        globalTime = time(NULL);
+        time_t now = globalTime;
+        
         //if deque is empty, skip
         if(is_empty)
         {
@@ -113,7 +116,7 @@ void gc_cache::run_gc_cache()
             continue;
         }
 
-        time_t now = time(NULL);
+        
         //check if the closed time is old enough to delete
         if(((now - file.closed_time) > file_cache_timeout_in_seconds) || disk_threshold_reached)
         {

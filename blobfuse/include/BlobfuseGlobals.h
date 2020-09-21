@@ -23,6 +23,7 @@ using namespace azure::storage_adls;
 bool is_directory_empty(const char *tmpDir);
 extern struct configParams config_options;
 extern struct globalTimes_st globalTimes;
+extern time_t globalTime;
 
 struct globalTimes_st
 {

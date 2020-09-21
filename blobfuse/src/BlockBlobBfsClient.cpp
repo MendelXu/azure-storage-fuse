@@ -427,7 +427,7 @@ BfsFileProperty BlockBlobBfsClient::GetProperties(std::string pathName, bool typ
             {
                 blob_property property;
                 if (errno == 0) {
-                    time_t last_mod = time(NULL);
+                    time_t last_mod = globalTime;
                     if (!blobItem.last_modified.empty()) {
                         struct tm mtime;
                         char *ptr = strptime(blobItem.last_modified.c_str(), "%a, %d %b %Y %H:%M:%S", &mtime);

@@ -182,7 +182,7 @@ class BfsFileProperty
 
         time_t get_last_modified()
         {
-            return last_modified != 0 ? last_modified : time(NULL);
+            return last_modified != 0 ? last_modified : globalTime;
         }
 
         time_t get_last_access()
