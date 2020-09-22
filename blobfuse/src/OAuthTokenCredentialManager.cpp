@@ -182,10 +182,11 @@ OAuthToken OAuthTokenCredentialManager::get_token()
     #ifdef TOKEN_REFRESH_THREAD
     // If token monitor thread is on then below flag will be reset once it goes for a refresh.
     // Hence there is no need to check any time, we can just rely on the flag
-    if (!valid_authentication) 
-    #else
+    if (valid_authentication)
+        return current_oauth_token;
+    #endif 
+
     if (is_token_expired()) 
-    #endif
     {
         // Lock the mutex.
         if (!token_mutex.try_lock()) {
@@ -208,10 +209,7 @@ OAuthToken OAuthTokenCredentialManager::get_token()
                 syslog(LOG_WARNING, "OAUTH Token : Wait for token to get refreshed as buffer time has expired");
                 token_mutex.lock();
             }
-        } 
-        #ifndef TOKEN_REFRESH_THREAD
-        else 
-        {
+        } else {
             try {
                 // Attempt to refresh.
                 fprintf(stdout, "oauth token has expired so calling refresh_token()\n");
@@ -224,7 +222,6 @@ OAuthToken OAuthTokenCredentialManager::get_token()
                 valid_authentication = false;
             }
         }
-        #endif
         
         // Note that we don't always lock in this function and sometimes return early.
         // Be sure to ensure you're safely manipulating the lock when modifying this function.
