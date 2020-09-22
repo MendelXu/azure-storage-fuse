@@ -398,7 +398,7 @@ int azs_getattr(const char *path, struct stat *stbuf)
                 stbuf->st_gid = fuse_get_context()->gid;
                 stbuf->st_nlink = dirSize == D_EMPTY ? 2 : 3;
                 stbuf->st_size = 4096;
-                stbuf->st_mtime = globalTime;
+                stbuf->st_mtime = time(NULL);
                 return 0;
             }
             else

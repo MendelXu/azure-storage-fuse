@@ -43,7 +43,7 @@ public:
 
     void SetProperties(BfsFileProperty &props)
     {
-        last_cached         = globalTime;
+        last_cached         = time(NULL);
         flags               = 0;
         last_modified       = props.last_modified;
         size                = props.size;
@@ -114,7 +114,7 @@ public:
 
     void setCacheTime() 
     {
-        last_cached = globalTime;
+        last_cached = time(NULL);
     }
  
     //std::mutex m_mutex;

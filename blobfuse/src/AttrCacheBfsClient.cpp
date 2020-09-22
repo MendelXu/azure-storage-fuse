@@ -129,7 +129,7 @@ void AttrCacheBfsClient::UploadFromFile(const std::string sourcePath, METADATA &
         struct stat stbuf;
         if (0 == stat(sourcePath.c_str(), &stbuf)) {
             cache_item->size = stbuf.st_size;
-            cache_item->last_modified = globalTime;
+            cache_item->last_modified = time(NULL);
             CLEAR_PROP_FLAG(cache_item->flags, PROP_FLAG_NOT_EXISTS);
             cache_item->setCacheTime();
             cache_item->parseMetaData(metadata);
@@ -155,7 +155,7 @@ void AttrCacheBfsClient::UploadFromStream(std::istream &sourceStream, const std:
         sourceStream.seekg(cur);
 
         cache_item->size = end - cur;
-        cache_item->last_modified = globalTime;
+        cache_item->last_modified = time(NULL);
         CLEAR_PROP_FLAG(cache_item->flags, PROP_FLAG_NOT_EXISTS);
 
         // Metadata vector is emptry to clean all flags which might have been set using metadata.
@@ -182,7 +182,7 @@ void AttrCacheBfsClient::UploadFromStream(std::istream &sourceStream, const std:
         sourceStream.seekg(cur);
 
         cache_item->size = end - cur;
-        cache_item->last_modified = globalTime;
+        cache_item->last_modified = time(NULL);
         CLEAR_PROP_FLAG(cache_item->flags, PROP_FLAG_NOT_EXISTS);
         cache_item->setCacheTime();
         cache_item->parseMetaData(metadata);
@@ -261,7 +261,7 @@ BfsFileProperty AttrCacheBfsClient::GetProperties(std::string pathName, bool typ
                 }
             }
             if ((cache_time_out == 0xffffffff) || 
-                (globalTime - cache_item->getCacheTime()) <= cache_time_out)
+                (time(NULL) - cache_item->getCacheTime()) <= cache_time_out)
                 return cache_item->GetProperties();
         }
     }
@@ -291,7 +291,7 @@ BfsFileProperty AttrCacheBfsClient::GetFileProperties(const std::string pathName
             (!IS_PROP_FLAG_SET(cache_item->flags, PROP_FLAG_IS_DIR)))
         {
             if ((cache_time_out == 0xffffffff) ||
-                (globalTime - cache_item->getCacheTime()) <= cache_time_out)
+                (time(NULL) - cache_item->getCacheTime()) <= cache_time_out)
                 return cache_item->GetProperties();
         }
     }
@@ -402,7 +402,7 @@ AttrCacheBfsClient::List(std::string continuation, const std::string prefix, con
 
     for (unsigned int i = 0; i < resp.m_items.size() && attr_cache.get_blob_item_len() < MAX_BLOB_CACHE_LEN; i++)
     {
-        time_t last_mod = globalTime;
+        time_t last_mod = time(NULL);
         if (!resp.m_items[i].last_modified.empty()) {
             struct tm mtime;
             char *ptr = strptime(resp.m_items[i].last_modified.c_str(), "%a, %d %b %Y %H:%M:%S", &mtime);
@@ -487,7 +487,7 @@ int AttrCacheBfsClient::ListAllItemsSegmented(
             for (unsigned int i = resultStart; i < listResults.size(); i++)
             {
                 blobItem = listResults[i];
-                time_t last_mod = globalTime;
+                time_t last_mod = time(NULL);
                 if (!blobItem.last_modified.empty()) {
                     struct tm mtime;
                     char *ptr = strptime(blobItem.last_modified.c_str(), "%a, %d %b %Y %H:%M:%S", &mtime);

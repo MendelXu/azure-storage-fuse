@@ -36,7 +36,7 @@ int azs_open(const char *path, struct fuse_file_info *fi)
     // We only want to refresh if enough time has passed that both are more than cache_timeout seconds ago.
     struct stat buf;
     int statret = stat(mntPath, &buf);
-    time_t now = globalTime;
+    time_t now = time(NULL);
     
 
     if (statret != 0 || 
@@ -365,10 +365,10 @@ int azs_flush(const char *path, struct fuse_file_info *fi)
             {
                 syslog(LOG_INFO, "Successfully uploaded file %s to blob %s.\n", path, blob_name.c_str());
             }
-            globalTimes.lastModifiedTime = globalTime;
+            globalTimes.lastModifiedTime = time(NULL);
         } else {
             //storage_client->UpdateBlobProperty(blob_name, "last_access", std::to_string(time(NULL)));
-            globalTimes.lastAccessTime = globalTime;
+            globalTimes.lastAccessTime = time(NULL);
         }
     }
     else
@@ -565,7 +565,7 @@ int azs_truncate(const char * path, off_t off)
                 syslog(LOG_INFO, "Successfully uploaded zero-length blob to path %s from azs_truncate.", pathString.c_str()+1);
                 return 0;
             }
-            globalTimes.lastModifiedTime = globalTime;
+            globalTimes.lastModifiedTime = time(NULL);
         }
         else
         {
