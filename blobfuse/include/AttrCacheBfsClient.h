@@ -38,7 +38,8 @@ class AttrCacheItem
 public:
     AttrCacheItem() : /*m_mutex(),*/ flags(0)
     {
-
+        last_cached = last_modified = 0;
+        flags = 0;
     }
 
     void SetProperties(BfsFileProperty &props)

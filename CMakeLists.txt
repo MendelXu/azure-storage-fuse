@@ -87,7 +87,7 @@ if(UNIX)
   add_definitions(-std=c++11)
   add_definitions(-D_FILE_OFFSET_BITS=64)
  # set(WARNING "-Wall -Wextra -Werror -pedantic -pedantic-errors")
-  set(WARNING "-Wall -Wextra -Werror")
+  set(WARNING "-Wall -Wextra -Werror -Wno-reorder")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_THREAD_LIBS_INIT} ${WARNING} ${CMAKE_CXX_FLAGS}")
 

@@ -226,21 +226,24 @@ struct list_segmented_item {
     list_segmented_item();
     list_segmented_item(list_blobs_segmented_item &item);
     list_segmented_item(list_paths_item &item);
+
     std::string name;
     std::string snapshot;
     std::string last_modified;
     std::string etag;
-    unsigned long long content_length;
     std::string content_encoding;
     std::string content_type;
     std::string content_md5;
     std::string content_language;
     std::string cache_control;
     //std::string copy_status;
-    std::vector<std::pair<std::string, std::string>> metadata;
-    access_control acl;
-    mode_t mode;
+    
     bool is_directory;
+    unsigned long long content_length;
+    mode_t mode;
+    access_control acl;
+
+    std::vector<std::pair<std::string, std::string>> metadata;
 };
 
 struct list_segmented_response {
