@@ -92,9 +92,6 @@ void OAuthTokenCredentialManager::StartTokenMonitor()
 
 
 #ifdef TOKEN_REFRESH_THREAD
-#ifdef TEST_TOKEN_THR
-unsigned int test_cnt = 0;
-#endif
 void OAuthTokenCredentialManager::TokenMonitor()
 {
     int retry_count = 0;
@@ -153,12 +150,6 @@ bool OAuthTokenCredentialManager::is_valid_connection()
 /// </summary>
 OAuthToken OAuthTokenCredentialManager::refresh_token()
 {
-    #ifdef TEST_TOKEN_THR
-    if ((test_cnt > 2) && (test_cnt % 5 == 0)) {
-        throw std::runtime_error("Failed");
-    }
-    #endif
-
     #ifdef TOKEN_REFRESH_THREAD
     valid_authentication = false;
     #endif
@@ -187,7 +178,7 @@ OAuthToken OAuthTokenCredentialManager::get_token()
 {
     #ifdef TOKEN_REFRESH_THREAD
     // since the thread would have updated the expired token just check if valid_authentication
-   // and return the current token, control will fall to the if is_token_expired() below if this directive is undefined.
+    // and return the current token, control will fall to the if is_token_expired() below if this directive is undefined.
     if (valid_authentication)
     {
         return current_oauth_token;
@@ -197,6 +188,9 @@ OAuthToken OAuthTokenCredentialManager::get_token()
     if (is_token_expired()) {
         // Lock the mutex.
         if (token_mutex.try_lock()) {
+            #ifdef TOKEN_REFRESH_THREAD
+            if (!valid_authentication) {
+            #endif
             try {
                 // Attempt to refresh.
                 fprintf(stdout, "oauth token has expired so calling refresh_token()\n");
@@ -209,6 +203,9 @@ OAuthToken OAuthTokenCredentialManager::get_token()
                 valid_authentication = false;
                 token_mutex.unlock();
             }
+            #ifdef TOKEN_REFRESH_THREAD
+            }
+            #endif
         } else {
             fprintf(stdout, "Locking mutex failed, so some token is being acquired., so just wait and get that\n");
             syslog(LOG_WARNING, "Locking mutex failed, so some token is being acquired., so just wait and get that\n");
@@ -242,14 +239,6 @@ OAuthToken OAuthTokenCredentialManager::get_token()
 /// <summary>
 bool OAuthTokenCredentialManager::is_token_expired()
 {
-    #ifdef TEST_TOKEN_THR
-    test_cnt++;
-
-    if (test_cnt % 4 == 0) {
-        return true;
-    }
-    #endif
-
     if(!valid_authentication)
     {
         syslog(LOG_INFO, "At is_token_expired: valid_authentication is false so token expired");
