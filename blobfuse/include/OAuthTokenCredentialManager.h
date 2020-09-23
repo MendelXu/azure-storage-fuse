@@ -1,5 +1,6 @@
 //
-// Created by amanda on 11/19/19.
+// OAuthTokenCredentialManager.h
+// Microsoft Corporation.
 //
 
 #include <boost/thread/shared_mutex.hpp>
@@ -9,7 +10,7 @@
 #ifndef OAUTH_TOKEN_CREDENTIAL_MANAGER_H
 #define OAUTH_TOKEN_CREDENTIAL_MANAGER_H
 
-// Enable this to start a thread to refresh the token instread of 
+// Enable this to start a thread to refresh the token instead of 
 // service thread checking the timer for each request and going for refresh
 #define TOKEN_REFRESH_THREAD
 

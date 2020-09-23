@@ -97,11 +97,14 @@ void OAuthTokenCredentialManager::TokenMonitor()
     int retry_count = 0;
     bool refreshed = false;
 
-    while(true) {
-        sleep(60);
-
+    while(true)
+    {
         if (!is_token_expired())
+        {
+             // Anyway we try to refresh token 5 minutes before so it is ok to sleep for 60 seconds.
+            sleep(60);
             continue;
+        }
 
         retry_count = 0;
         refreshed = false;
@@ -180,36 +183,17 @@ OAuthToken OAuthTokenCredentialManager::refresh_token()
 OAuthToken OAuthTokenCredentialManager::get_token()
 {
     #ifdef TOKEN_REFRESH_THREAD
-    // If token monitor thread is on then below flag will be reset once it goes for a refresh.
-    // Hence there is no need to check any time, we can just rely on the flag
+    // since the thread would have updated the expired token just check if valid_authentication
+   // and return the current token, control will fall to the if is_token_expired() below if this directive is undefined.
     if (valid_authentication)
-        return current_oauth_token;
-    #endif 
-
-    if (is_token_expired()) 
     {
+        return current_oauth_token;
+    }
+    #endif
+    syslog(LOG_DEBUG, "No thread to refresh token so checking if the token has expired ...\n");
+    if (is_token_expired()) {
         // Lock the mutex.
-        if (!token_mutex.try_lock()) {
-            fprintf(stdout, "Locking mutex failed, so some token is being acquired., so just wait and get that\n");
-            syslog(LOG_WARNING, "OAUTH Token : Locking mutex failed, so some token is being acquired., so just wait and get that\n");
-
-            time_t current_time;
-            current_time =  get_current_time_in_utc();
-
-            // There's a five minute segment where the token hasn't actually expired yet, but we're already trying to refresh it.
-            // We can just use the currently active token instead, rather than waiting for the refresh.
-            // This'll save some downtime on systems under constant use.
-            if (current_time < current_oauth_token.expires_on) {
-                syslog(LOG_DEBUG, "OAUTH Token : Locking mutex failed. buffer time is there use old token\n");
-                return current_oauth_token;
-            } else {
-                // If it's not still live, let's just wait for the refresh to finish.
-                // This is a sub-optimal method to wait for this event as it can end up blocking other routines after the token has finished refreshing.
-                // If we were working in Go, I (Adele) would suggest using a sync.WaitGroup for this functionality.
-                syslog(LOG_WARNING, "OAUTH Token : Wait for token to get refreshed as buffer time has expired");
-                token_mutex.lock();
-            }
-        } else {
+        if (token_mutex.try_lock()) {
             try {
                 // Attempt to refresh.
                 fprintf(stdout, "oauth token has expired so calling refresh_token()\n");
