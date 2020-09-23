@@ -12,8 +12,8 @@
 #define BLBOFUSE_VERSION "Undefined"
 #endif
 
-#define AZS_DEBUGLOGV(fmt,...) do {syslog(LOG_DEBUG,"Function %s, in file %s, line %d: " fmt, __func__, __FILE__, __LINE__, __VA_ARGS__); } while(0)
-#define AZS_DEBUGLOG(fmt) do {syslog(LOG_DEBUG,"Function %s, in file %s, line %d: " fmt, __func__, __FILE__, __LINE__); } while(0)
+#define AZS_DEBUGLOGV(fmt,...) syslog(LOG_DEBUG,"%s::%s(%d) : " fmt, __FILE__, __func__, __LINE__, __VA_ARGS__); 
+#define AZS_DEBUGLOG(fmt) syslog(LOG_DEBUG,"%s::%s(%d) : " fmt, __FILE__, __func__, __LINE__); 
 
 /* Define errors and return codes */
 enum D_RETURN_CODE

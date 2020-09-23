@@ -101,7 +101,7 @@ namespace azure {  namespace storage_lite {
                 curlCode != CURLE_OK ||
                 unsuccessful(m_code)) 
             {
-                syslog(curlCode != CURLE_OK || unsuccessful(m_code) ? LOG_ERR : LOG_DEBUG, "%s", format_request_response().c_str());
+                syslog(curlCode != CURLE_OK || unsuccessful(m_code) ? LOG_ERR : LOG_INFO, "%s", format_request_response().c_str());
             }
             cb(m_code, m_error_stream, curlCode);
         }

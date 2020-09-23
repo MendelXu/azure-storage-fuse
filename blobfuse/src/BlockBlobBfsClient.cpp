@@ -321,7 +321,7 @@ bool BlockBlobBfsClient::DeleteDirectory(const std::string directoryPath)
         return false;
         break;
     case D_EMPTY:
-        syslog(LOG_DEBUG,
+        AZS_DEBUGLOGV(
                "Directory is empty, attempting deleting directory marker: %s\n",
                directoryPath.c_str());
         DeleteFile((std::string)directoryPath);
@@ -393,7 +393,7 @@ BfsFileProperty BlockBlobBfsClient::GetProperties(std::string pathName, bool typ
                 std::vector<list_segmented_item> listResults = listResponse[batchNum].first;
                 for (unsigned int i = resultStart; i < listResults.size(); i++)
                 {
-                    syslog(LOG_ERR,"In GetProperties list_segmented_item %d file %s\n", i, listResults[i].name.c_str());
+                    AZS_DEBUGLOGV("In GetProperties list_segmented_item %d file %s\n", i, listResults[i].name.c_str());
 
                     // if the path for exact name is found the dirSize will be 1 here so check to see if it has files or subdirectories inside
                     // match dir name or longer paths to determine dirSize
@@ -413,7 +413,7 @@ BfsFileProperty BlockBlobBfsClient::GetProperties(std::string pathName, bool typ
                     if (blobItem.name.empty() && (listResults[i].name == pathName || listResults[i].name == (pathName + '/')))
                     {
                         blobItem = listResults[i];
-                        syslog(LOG_ERR,"In GetProperties found blob in list hierarchical file %s\n", blobItem.name.c_str());
+                        AZS_DEBUGLOGV("In GetProperties found blob in list hierarchical file %s\n", blobItem.name.c_str());
                         // leave 'i' at the value it is, it will be used in the remaining batches and loops to check for directory empty check.
                         if (dirSize == 0 && (is_directory_blob(0, blobItem.metadata) || blobItem.is_directory || blobItem.name == (pathName + '/')))
                         {
@@ -465,7 +465,7 @@ BfsFileProperty BlockBlobBfsClient::GetProperties(std::string pathName, bool typ
             }
             else // none of the blobs match exactly so blob not found
             {
-                syslog(LOG_ERR,"%s does not match the exact name in the top 2 return from list_hierarchial_blobs. It will be treated as a new blob", pathName.c_str());
+                AZS_DEBUGLOGV("%s does not match the exact name in the top 2 return from list_hierarchial_blobs. It will be treated as a new blob", pathName.c_str());
                 //errno = ENOENT;
                 BfsFileProperty cache_prop = BfsFileProperty(true);
                 errno = 404;
@@ -673,7 +673,7 @@ int BlockBlobBfsClient::rename_single_file(std::string src, std::string dst, std
         }
         else
         {
-            AZS_DEBUGLOGV("Successfully to renamed file %s to %s in the local cache.\n", src.c_str(), dst.c_str());
+            AZS_DEBUGLOGV("Successfully renamed file %s to %s in the local cache.\n", src.c_str(), dst.c_str());
         }
     }
 

@@ -175,7 +175,7 @@ int azs_getattr(const char *path, struct stat *stbuf)
         blobNameStr == ".Trash-1000" ||
         blobNameStr == ".xdg-volume-info" ||
         blobNameStr == "autorun.inf") {
-        syslog(LOG_DEBUG, "Ignoring %s in getattr", blobNameStr.c_str());
+        AZS_DEBUGLOGV("Ignoring %s in getattr", blobNameStr.c_str());
         return -(ENOENT);
     }
 
@@ -323,7 +323,6 @@ int azs_getattr(const char *path, struct stat *stbuf)
         if (errno > 0)
         {
             int storage_errno = errno;
-            AZS_DEBUGLOGV("Failure when attempting to determine if %s exists on the service.  errno = %d.\n", blobNameStr.c_str(), storage_errno);
             syslog(LOG_ERR, "Failure when attempting to determine if %s exists on the service.  errno = %d.\n", blobNameStr.c_str(), storage_errno);
             response.reset();
             return 0 - map_errno(storage_errno);
@@ -420,7 +419,6 @@ int azs_getattr(const char *path, struct stat *stbuf)
             }
             // If we received a different error, then let's fail with that error
             int storage_errno = errno;
-            AZS_DEBUGLOGV("Failure when attempting to determine if %s exists on the service.  errno = %d.\n", blobNameStr.c_str(), storage_errno);
             syslog(LOG_ERR, "Failure when attempting to determine if %s exists on the service.  errno = %d.\n", blobNameStr.c_str(), storage_errno);
             return 0 - map_errno(storage_errno);
         }

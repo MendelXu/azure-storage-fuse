@@ -288,7 +288,7 @@ D_RETURN_CODE DataLakeBfsClient::IsDirectoryEmpty(std::string path)
                 }
             }
         }
-        else if (errno ==400 || errno == 404)
+        else if (errno == 400 || errno == 404)
         {
             success = true;
             syslog(LOG_WARNING, "adls list list_blobs_segmented indicates blob not found errno: %u", errno);
@@ -348,7 +348,7 @@ std::vector<std::string> DataLakeBfsClient::Rename(std::string sourcePath, std::
 
 int DataLakeBfsClient::List(std::string continuation, std::string prefix, std::string delimiter, list_segmented_response &resp, int max_results)
 {
-    syslog(LOG_DEBUG, "Calling List Paths, continuation:%s, prefix:%s, delimiter:%s\n",
+    AZS_DEBUGLOGV("Calling List Paths, continuation:%s, prefix:%s, delimiter:%s\n",
             continuation.c_str(),
             prefix.c_str(),
             delimiter.c_str());
@@ -465,12 +465,12 @@ long int DataLakeBfsClient::rename_cached_file(std::string src, std::string dst)
         }
         else
         {
-            AZS_DEBUGLOGV("Successfully to renamed file %s to %s in the local cache.\n", src.c_str(), dst.c_str());
+            AZS_DEBUGLOGV("Successfully renamed file %s to %s in the local cache.\n", src.c_str(), dst.c_str());
         }
     }
     else
     {
-        AZS_DEBUGLOGV("Failure to find source %s in the local cache. errno = %d\n", src.c_str(), errno);
+        syslog(LOG_WARNING, "Failure to find source %s in the local cache. errno = %d\n", src.c_str(), errno);
         //we don't have to rename if the file or directory does not exist in the cache
         return 0;
     }
@@ -511,7 +511,7 @@ int DataLakeBfsClient::UpdateBlobProperty(std::string pathStr, std::string key, 
     if (updated) {
         m_adls_client->set_file_properties(configurations.containerName, pathStr, blob_property.metadata);
         if (errno) {
-            AZS_DEBUGLOGV("Failed to update property for %s : err %d", pathStr.c_str(), errno);
+            syslog(LOG_ERR, "Failed to update property for %s : err %d", pathStr.c_str(), errno);
         }
     }
     return errno;

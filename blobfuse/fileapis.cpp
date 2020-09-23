@@ -18,7 +18,7 @@ std::shared_ptr<gc_cache> g_gc_cache;
 // The variables "mntPath" and "mntPathString" refer to on-disk cached location of the corresponding file/blob.
 int azs_open(const char *path, struct fuse_file_info *fi)
 {
-    syslog (LOG_DEBUG, "azs_open called with path = %s, fi->flags = %X.\n", path, fi->flags);
+    AZS_DEBUGLOGV("azs_open called with path = %s, fi->flags = %X.\n", path, fi->flags);
     std::string pathString(path);
     std::replace(pathString.begin(), pathString.end(), '\\', '/');
     
@@ -242,7 +242,6 @@ int azs_create(const char *path, mode_t mode, struct fuse_file_info *fi)
     struct fhwrapper *fhwrap = new fhwrapper(res, true);
     fi->fh = (long unsigned int)fhwrap;
     syslog(LOG_INFO, "Successfully created file %s in file cache.\n", path);
-    AZS_DEBUGLOGV("Returning success from azs_create with file %s.\n", path);
     return 0;
 }
 
