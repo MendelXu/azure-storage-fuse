@@ -14,6 +14,7 @@
 // service thread checking the timer for each request and going for refresh
 #define TOKEN_REFRESH_THREAD
 
+
 using namespace azure::storage_lite;
 
 class OAuthTokenCredentialManager {
