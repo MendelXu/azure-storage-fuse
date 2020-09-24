@@ -53,7 +53,6 @@ jobs:
 
       # Build the blobFuse binary
       - script: |
-          export INCLUDE_TESTS=1
           sudo chmod +x build.sh
           . ./build.sh
         displayName: "Build BlobFuse"
@@ -75,16 +74,6 @@ jobs:
           cp ./blobfuse-*.*.*-Linux.deb  $(Build.ArtifactStagingDirectory)/$(container_image)
         displayName: "Build Artifacts"
 
-      # Test the binary
-      # For now only on Ubn16.04
-      - script: |
-          ls -al
-          chmod 777 ./blobfusetests
-          $(Build.BinariesDirectory)/blobfusetests --gtest_filter=-BlobClientWrapperTest.*
-        workingDirectory: $(Build.BinariesDirectory)
-        condition: eq(variables.container_image, 'ubuntu-16.04')
-        displayName: "GTest on Ubn-16"
-  
       # Publish the Artifacts
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifacts for blobfuse $(container_image)'
@@ -165,6 +154,7 @@ jobs:
       # Generate the RPM
       - script: |
           cd blobfuse
+          mkdir $(Build.ArtifactStagingDirectory)/$(container_image)
           ./generaterpm.sh -srcdir ../build -distrover $(DistroVer)
           cp ./blobfuse-*-*.rpm  $(Build.ArtifactStagingDirectory)/$(container_image)
         displayName: "Build the RPM"
