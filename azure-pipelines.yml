@@ -97,20 +97,24 @@ jobs:
       matrix:
         RHEL7.8:
           AGENT_NAME: 'RHEL 7.8'
+          DistroVer: "rhel78"
+          container_image: 'rhel-7.8'
         RHEL8.1:
           AGENT_NAME: 'RHEL 8.1'
+          DistroVer: "rhel81"
+          container_image: 'rhel-8.1'
     pool:
       name: "Blobfuse Pool"
 
     steps:
       # Install all dependencies
       - script: |
-          sudo yum install pkg-config cmake libcurl4-gnutls-dev libgnutls28-dev uuid-dev libgcrypt20-dev libboost-all-dev gcc g++ -y
+          sudo yum install tar make cmake gcc gcc-c++ curl-devel gnutls-devel libuuid-devel boost-devel libgcrypt-devel rpm-build -y
         displayName: "Basic Tools Setup"
 
       # Install libfuse
       - script: |
-          sudo yum install libfuse-dev -y
+          sudo yum install fuse-devel -y
         displayName: "libFuse Setup"
 
       # List commits consumed for this build
@@ -131,5 +135,15 @@ jobs:
           ./build/blobfuse --version
         displayName: "Test the binary"
 
+      # Generate the RPM
+      - script: |
+          cd blobfuse
+          ./generaterpm.sh -srcdir ../build -distrover $(DistroVer)
+          cp ./blobfuse-*-*.rpm  $(Build.ArtifactStagingDirectory)/$(container_image)
+        displayName: "Build the RPM"
+
+      # Publish the Artifacts
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifacts for blobfuse $(container_image)'
       
   # -------    RHEL Pipelines end here ------------------
