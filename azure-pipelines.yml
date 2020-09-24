@@ -123,11 +123,6 @@ jobs:
 
       # Checkout code
       - script: |
-          cd ~
-          sudo mkdir -p /usr/pipeline/blobfuse
-          sudo chown -R `whoami` /usr/pipeline/blobfuse
-          chmod 777 /usr/pipeline/blobfuse
-          cd /usr/pipeline/blobfuse
           git clone https://github.com/Azure/azure-storage-fuse
           cd azure-storage-fuse
         displayName: "Checkout code"
@@ -162,4 +157,10 @@ jobs:
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifacts for blobfuse $(container_image)'
       
+      # Cleanup work directory of self hosted agent
+      - script: |
+          rm -rf *
+        displayName: 'Cleanup'
+        condition: succeeded()
+
   # -------    RHEL Pipelines end here ------------------
