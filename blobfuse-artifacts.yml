@@ -89,7 +89,7 @@ jobs:
           DistroVer: "rhel78"
           container_image: 'rhel-7.8'
         RHEL8.1:
-          AGENT_NAME: 'RHEL 8.2'
+          AGENT_NAME: 'FAILUREBOT'
           DistroVer: "rhel81"
           container_image: 'rhel-8.1'
     pool:
