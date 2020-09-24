@@ -107,15 +107,31 @@ jobs:
       name: "Blobfuse Pool"
 
     steps:
+      # DevOps checks for a specific git version and it fails on some distros
+      # so instead of pipeline checking out the code, do it manually
+      - checkout: none
+
       # Install all dependencies
       - script: |
-          sudo yum install tar make cmake gcc gcc-c++ curl-devel gnutls-devel libuuid-devel boost-devel libgcrypt-devel rpm-build -y
+          sudo git yum install tar make cmake gcc gcc-c++ curl-devel gnutls-devel libuuid-devel boost-devel libgcrypt-devel rpm-build -y
         displayName: "Basic Tools Setup"
 
       # Install libfuse
       - script: |
           sudo yum install fuse-devel -y
         displayName: "libFuse Setup"
+
+      # Checkout code
+      - script: |
+          cd ~
+          sudo mkdir -p /usr/pipeline/blobfuse
+          sudo chown -R `whoami` /usr/pipeline/blobfuse
+          chmod 777 /usr/pipeline/blobfuse
+          cd /usr/pipeline/blobfuse
+          git clone https://github.com/Azure/azure-storage-fuse
+          cd azure-storage-fuse
+        displayName: "Checkout code"
+
 
       # List commits consumed for this build
       - script: |
