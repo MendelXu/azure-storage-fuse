@@ -86,17 +86,16 @@ jobs:
       matrix:
         RHEL7.8:
           DistroVer: "RHEL7.8"
-          pool:
-            name: "Blobfuse Pool"
-          demands: 
-          - Agent.Name -equals 'RHEL 7.8'
+          AgentName : "RHEL 7.8"
         RHEL8.1:
           DistroVer: "RHEL-8.1"
-          pool:
-            name: "Blobfuse Pool"
-          demands: 
-          - Agent.Name -equals 'RHEL 8.1'
-    
+          AgentName: "RHEL 8.1"
+
+    pool:
+      name: "Blobfuse Pool"
+      demands:
+      - Agent.Name -equals $(AgentName)
+
     variables:
     - name: WORK_DIR
       value: "/usr/pipeline/blobfuse"
