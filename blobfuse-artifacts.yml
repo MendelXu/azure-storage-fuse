@@ -85,13 +85,13 @@ jobs:
     strategy:
       matrix:
         RHEL7.8:
-          AGENT_NAME: 'RHEL 7.8'
-          DistroVer: "rhel78"
-          container_image: 'rhel-7.8'
+          DistroVer: "RHEL7.8"
+          demands: 
+          - agent.name -equals 'RHEL 7.8'
         RHEL8.1:
-          AGENT_NAME: 'FAILUREBOT'
-          DistroVer: "rhel81"
-          container_image: 'rhel-8.1'
+          DistroVer: "RHEL-8.1"
+          demands: 
+          - agent.name -equals 'RHEL 8.1'
     pool:
       name: "Blobfuse Pool"
 
@@ -154,15 +154,15 @@ jobs:
       # Generate the RPM
       - script: |
           cd blobfuse
-          mkdir $(Build.ArtifactStagingDirectory)/$(container_image)
+          mkdir $(Build.ArtifactStagingDirectory)/$(DistroVer)
           ./generaterpm.sh -srcdir ../build -distrover $(DistroVer)
-          cp ./blobfuse-*-*.rpm  $(Build.ArtifactStagingDirectory)/$(container_image)
+          cp ./blobfuse-*-*.rpm  $(Build.ArtifactStagingDirectory)/$(DistroVer)
         displayName: "Build the RPM"
         workingDirectory: $(ROOT_DIR)
 
       # Publish the Artifacts
       - task: PublishBuildArtifacts@1
-        displayName: 'Publish Artifacts for blobfuse $(container_image)'
+        displayName: 'Publish Artifacts for blobfuse $(DistroVer)'
       
       # Cleanup work directory of self hosted agent
       - script: |
