@@ -89,3 +89,41 @@ jobs:
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifacts for blobfuse $(container_image)'
         #condition: succeededOrFailed()
+
+  # -------    Ubuntu Pipelines end here ------------------
+
+  - job: RHELBuilds
+    pool:
+      name: "Blobfuse Pool"
+
+    steps:
+      # Install all dependencies
+      - script: |
+          sudo yum install pkg-config cmake libcurl4-gnutls-dev libgnutls28-dev uuid-dev libgcrypt20-dev libboost-all-dev gcc g++ -y
+        displayName: "Basic Tools Setup"
+
+      # Install libfuse
+      - script: |
+          sudo yum install libfuse-dev -y
+        displayName: "libFuse Setup"
+
+      # List commits consumed for this build
+      - script: |
+          echo "Below commits were done in last 12 hours : " `date` 
+          git --no-pager log --since="12 hours ago" --stat
+        displayName: "List Commits"
+
+      # Build the blobFuse binary
+      - script: |
+          export INCLUDE_TESTS=1
+          sudo chmod +x build.sh
+          . ./build.sh
+        displayName: "Build BlobFuse"
+
+      # Test the binary just to make sure it was built fine
+      - script: |
+          ./build/blobfuse --version
+        displayName: "Test the binary"
+
+      
+  # -------    RHEL Pipelines end here ------------------
