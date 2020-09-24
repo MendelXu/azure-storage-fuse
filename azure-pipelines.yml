@@ -106,6 +106,12 @@ jobs:
     pool:
       name: "Blobfuse Pool"
 
+    variables:
+    - name: WORK_DIR
+      value: "/usr/pipeline/blobfuse"
+    - name: ROOT_DIR
+      value: "/usr/pipeline/blobfuse/azure-storage-fuse"
+
     steps:
       # DevOps checks for a specific git version and it fails on some distros
       # so instead of pipeline checking out the code, do it manually
@@ -123,9 +129,17 @@ jobs:
 
       # Checkout code
       - script: |
+          sudo rm -rf $(WORK_DIR)
+          sudo mkdir -p $(WORK_DIR)
+          sudo chown -R `whoami` $(WORK_DIR)
+          chmod 777 $(WORK_DIR)
+        displayName: "Create Directory structure"
+
+      # Checkout code
+      - script: |
           git clone https://github.com/Azure/azure-storage-fuse
-          cd azure-storage-fuse
         displayName: "Checkout code"
+        workingDirectory: $(WORK_DIR)
 
 
       # List commits consumed for this build
@@ -133,6 +147,7 @@ jobs:
           echo "Below commits were done in last 12 hours : " `date` 
           git --no-pager log --since="12 hours ago" --stat
         displayName: "List Commits"
+        workingDirectory: $(ROOT_DIR)
 
       # Build the blobFuse binary
       - script: |
@@ -140,11 +155,13 @@ jobs:
           sudo chmod +x build.sh
           . ./build.sh
         displayName: "Build BlobFuse"
+        workingDirectory: $(ROOT_DIR)
 
       # Test the binary just to make sure it was built fine
       - script: |
           ./build/blobfuse --version
         displayName: "Test the binary"
+        workingDirectory: $(ROOT_DIR)
 
       # Generate the RPM
       - script: |
@@ -152,6 +169,7 @@ jobs:
           ./generaterpm.sh -srcdir ../build -distrover $(DistroVer)
           cp ./blobfuse-*-*.rpm  $(Build.ArtifactStagingDirectory)/$(container_image)
         displayName: "Build the RPM"
+        workingDirectory: $(ROOT_DIR)
 
       # Publish the Artifacts
       - task: PublishBuildArtifacts@1
@@ -159,8 +177,7 @@ jobs:
       
       # Cleanup work directory of self hosted agent
       - script: |
-          rm -rf *
+          sudo rm -rf $(WORK_DIR)
         displayName: 'Cleanup'
-        condition: succeeded()
-
+        condition: succeededOrFailed()
   # -------    RHEL Pipelines end here ------------------
