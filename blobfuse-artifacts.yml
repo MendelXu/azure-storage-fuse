@@ -90,9 +90,6 @@ jobs:
         RHEL8.1:
           DistroVer: "RHEL-8.1"
           AgentName: "RHEL 8.1"
-        RHEL8.2:
-          DistroVer: "RHEL-8.2"
-          AgentName: "RHEL 8.2"
 
     pool:
       name: "Blobfuse Pool"
