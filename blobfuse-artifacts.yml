@@ -138,12 +138,19 @@ jobs:
           cp ./blobfusetests $(Build.BinariesDirectory)
           make package
           cp ./blobfuse-*.*.*-Linux.deb  $(Build.ArtifactStagingDirectory)/$(DistroVer)
+          cd ..
         displayName: "Build Artifacts"
 
       # Publish the Artifacts
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifacts for blobfuse $(DistroVer)'
         #condition: succeededOrFailed()
+      
+      # Cleanup work directory of self hosted agent
+      - script: |
+          sudo rm -rf *
+        displayName: 'Cleanup'
+        condition: succeededOrFailed()
 
   # -------    Debain Pipelines end here ------------------
 
