@@ -103,7 +103,7 @@ jobs:
         ORA8.1:
           DistroVer: "ORA-8.1"
           AgentName: "ORA 8.1"
-          Description: "Oracle Linux 8.1 (Gen 2)"
+          Description: "Oracle Linux 8.1 Gen 2"
 
     pool:
       name: "Blobfuse Pool"
