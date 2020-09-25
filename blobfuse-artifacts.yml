@@ -190,7 +190,7 @@ jobs:
       - script: |
           echo $(SignRequired)
         displayName: 'Sign the build'
-        condition: eq($(SignRequired), 1)
+        condition: eq(variables.SignRequired, 1)
 
 
       # Publish the Artifacts
