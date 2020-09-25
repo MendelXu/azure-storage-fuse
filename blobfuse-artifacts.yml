@@ -100,12 +100,12 @@ jobs:
           Description: "Red Hat Enterprise Linux 8.2"
           SignRequired: 1
         COS8.0:
-          DistroVer: "COS-8.0"
+          DistroVer: "CentOS-8.0"
           AgentName: "COS 8.0"
           Description: "CentOS Linux 8.0"
           SignRequired: 0
         ORA8.1:
-          DistroVer: "ORA-8.1"
+          DistroVer: "Oracle-8.1"
           AgentName: "ORA 8.1"
           Description: "Oracle Linux 8.1 Gen 2"
           SignRequired: 1
