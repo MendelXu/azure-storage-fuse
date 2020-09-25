@@ -93,6 +93,9 @@ jobs:
         RHEL8.2:
           DistroVer: "RHEL-8.2"
           AgentName: "RHEL 8.2"
+        COS8.0:
+          DistroVer: "COS-8.0"
+          AgentName: "COS 8.0"
 
     pool:
       name: "Blobfuse Pool"
