@@ -16,7 +16,7 @@ pr:
       - master
 
 jobs:
-  - job: UbuntuBuilds
+  - job: Set-1
 
     # Define on what all OS we want to run this Pipeline
     strategy:
@@ -83,7 +83,7 @@ jobs:
 
   # -------    Ubuntu Pipelines end here ------------------
   
-  - job: DebainBuilds
+  - job: set-2
 
     strategy:
       matrix:
@@ -154,7 +154,7 @@ jobs:
 
   # -------    Debain Pipelines end here ------------------
 
-  - job: RHELBuilds
+  - job: Set-3
     strategy:
       matrix:
         RHEL7.8:
