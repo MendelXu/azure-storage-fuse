@@ -87,15 +87,23 @@ jobs:
         RHEL7.8:
           DistroVer: "RHEL7.8"
           AgentName : "RHEL 7.8"
+          Description: "Red Hat Enterprise Linux 7.8"
         RHEL8.1:
           DistroVer: "RHEL-8.1"
           AgentName: "RHEL 8.1"
+          Description: "Red Hat Enterprise Linux 8.1"
         RHEL8.2:
           DistroVer: "RHEL-8.2"
           AgentName: "RHEL 8.2"
+          Description: "Red Hat Enterprise Linux 8.2"
         COS8.0:
           DistroVer: "COS-8.0"
           AgentName: "COS 8.0"
+          Description: "CentOS Linux 8.0"
+        ORA8.1:
+          DistroVer: "ORA-8.1"
+          AgentName: "ORA 8.1"
+          Description: "Oracle Linux 8.1 (Gen 2)"
 
     pool:
       name: "Blobfuse Pool"
@@ -112,6 +120,12 @@ jobs:
       # DevOps checks for a specific git version and it fails on some distros
       # so instead of pipeline checking out the code, do it manually
       - checkout: none
+
+      # Install all dependencies
+      - script: |
+          echo $(Description)
+          hostnamectl
+        displayName: "Print Agent Info"
 
       # Install all dependencies
       - script: |
