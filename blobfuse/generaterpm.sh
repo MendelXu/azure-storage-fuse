@@ -199,4 +199,4 @@ cd -
 # copy RPM output to the local directory and add the distro name as part of it.
  
 cp ~/rpmbuild/RPMS/x86_64/blobfuse-${version}-*x86_64.rpm .
-mv blobfuse-${version}-*x86_64.rpm blobfuse-${version}-${distrover}-x86_64.rpm
+mv blobfuse-${version}-*x86_64.rpm blobfuse-${version}-${distrover}.rpm
