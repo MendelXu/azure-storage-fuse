@@ -73,7 +73,8 @@ jobs:
           cp ../systemd/blobfuse-logrotate $(Build.ArtifactStagingDirectory)/$(container_image)
           cp ./blobfusetests $(Build.BinariesDirectory)
           make package
-          cp ./blobfuse-*.*.*-Linux.deb  $(Build.ArtifactStagingDirectory)/$(container_image)
+          mv ./blobfuse-*.*.*-Linux.deb ./`./blobfuse -v | tr ' ' '-'`-$(container_image).deb
+          cp ./blobfuse-*.*.*.deb  $(Build.ArtifactStagingDirectory)/$(container_image)
         displayName: "Build Artifacts"
 
       # Publish the Artifacts
@@ -137,7 +138,8 @@ jobs:
           cp ../systemd/blobfuse-logrotate $(Build.ArtifactStagingDirectory)/$(DistroVer)
           cp ./blobfusetests $(Build.BinariesDirectory)
           make package
-          cp ./blobfuse-*.*.*-Linux.deb  $(Build.ArtifactStagingDirectory)/$(DistroVer)
+          mv ./blobfuse-*.*.*-Linux.deb ./`./blobfuse -v | tr ' ' '-'`-$(DistroVer).deb
+          cp ./blobfuse-*.*.*.deb  $(Build.ArtifactStagingDirectory)/$(DistroVer)
           cd ..
         displayName: "Build Artifacts"
 
