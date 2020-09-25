@@ -88,22 +88,27 @@ jobs:
           DistroVer: "RHEL7.8"
           AgentName : "RHEL 7.8"
           Description: "Red Hat Enterprise Linux 7.8"
+          SignRequired: 1
         RHEL8.1:
           DistroVer: "RHEL-8.1"
           AgentName: "RHEL 8.1"
           Description: "Red Hat Enterprise Linux 8.1"
+          SignRequired: 1
         RHEL8.2:
           DistroVer: "RHEL-8.2"
           AgentName: "RHEL 8.2"
           Description: "Red Hat Enterprise Linux 8.2"
+          SignRequired: 1
         COS8.0:
           DistroVer: "COS-8.0"
           AgentName: "COS 8.0"
           Description: "CentOS Linux 8.0"
+          SignRequired: 0
         ORA8.1:
           DistroVer: "ORA-8.1"
           AgentName: "ORA 8.1"
           Description: "Oracle Linux 8.1 Gen 2"
+          SignRequired: 1
 
     pool:
       name: "Blobfuse Pool"
@@ -180,6 +185,13 @@ jobs:
           cp ./blobfuse-*-*.rpm  $(Build.ArtifactStagingDirectory)/$(DistroVer)
         displayName: "Build the RPM"
         workingDirectory: $(ROOT_DIR)
+
+      # Sign the RPM
+      - script: |
+          echo $(SignRequired)
+        displayName: 'Sign the build'
+        condition: eq($(SignRequired), 1)
+
 
       # Publish the Artifacts
       - task: PublishBuildArtifacts@1
