@@ -67,6 +67,8 @@ jobs:
           cd ./build/
           mkdir $(Build.ArtifactStagingDirectory)/$(container_image)
           cp ./blobfuse $(Build.ArtifactStagingDirectory)/$(container_image)
+          cp ../README.md $(Build.ArtifactStagingDirectory)/$(container_image)
+          cp ../LICENSE $(Build.ArtifactStagingDirectory)/$(container_image)
           cp ../systemd/10-blobfuse.conf $(Build.ArtifactStagingDirectory)/$(container_image)
           cp ../systemd/blobfuse-logrotate $(Build.ArtifactStagingDirectory)/$(container_image)
           cp ./blobfusetests $(Build.BinariesDirectory)
