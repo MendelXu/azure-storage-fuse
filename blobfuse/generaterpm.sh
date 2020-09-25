@@ -118,8 +118,6 @@ mkdir -p blobfuse-${version}
 cp blobfuse blobfuse-${version}/
 cp ../README.md blobfuse-${version}/
 cp ../LICENSE blobfuse-${version}/
-cp ../systemd/10-blobfuse.conf blobfuse-${version}/
-cp ../systemd/blobfuse-logrotate blobfuse-${version}/
 
 tar -cvjSf blobfuse-${version}-${distrover}.tar.bz2 blobfuse-${version}
 echo "Copying Tar to: ~/rpmbuild/SOURCES";

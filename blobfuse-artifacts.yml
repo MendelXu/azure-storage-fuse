@@ -82,6 +82,70 @@ jobs:
         #condition: succeededOrFailed()
 
   # -------    Ubuntu Pipelines end here ------------------
+  
+  - job: DebainBuilds
+
+    strategy:
+      matrix:
+        DEB9.0:
+          DistroVer: "Debian9.0"
+          AgentName : "DEB 9.0"
+          Description: "Debian Linux 9.0"
+
+    pool:
+      name: "Blobfuse Pool"
+      demands:
+      - Agent.Name -equals $(AgentName)
+
+    steps:
+      # Install all dependencies
+      - script: |
+          sudo apt-get update --fix-missing
+          sudo apt-get install pkg-config cmake libcurl4-gnutls-dev libgnutls28-dev uuid-dev libgcrypt20-dev libboost-all-dev gcc g++ -y
+        displayName: "Basic Tools Setup"
+
+      # Install libfuse
+      - script: |
+          sudo apt-get install libfuse-dev -y
+        displayName: "libFuse Setup"
+
+      # List commits consumed for this build
+      - script: |
+          echo "Below commits were done in last 12 hours : " `date` 
+          git --no-pager log --since="12 hours ago" --stat
+        displayName: "List Commits"
+
+      # Build the blobFuse binary
+      - script: |
+          sudo chmod +x build.sh
+          . ./build.sh
+        displayName: "Build BlobFuse"
+
+      # Test the binary just to make sure it was built fine
+      - script: |
+          ./build/blobfuse --version
+        displayName: "Test the binary"
+
+      # Copy binaries required for the package
+      - script: |
+          cd ./build/
+          mkdir $(Build.ArtifactStagingDirectory)/$(DistroVer)
+          cp ./blobfuse $(Build.ArtifactStagingDirectory)/$(DistroVer)
+          cp ../README.md $(Build.ArtifactStagingDirectory)/$(DistroVer)
+          cp ../LICENSE $(Build.ArtifactStagingDirectory)/$(DistroVer)
+          cp ../systemd/10-blobfuse.conf $(Build.ArtifactStagingDirectory)/$(DistroVer)
+          cp ../systemd/blobfuse-logrotate $(Build.ArtifactStagingDirectory)/$(DistroVer)
+          cp ./blobfusetests $(Build.BinariesDirectory)
+          make package
+          cp ./blobfuse-*.*.*-Linux.deb  $(Build.ArtifactStagingDirectory)/$(DistroVer)
+        displayName: "Build Artifacts"
+
+      # Publish the Artifacts
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifacts for blobfuse $(DistroVer)'
+        #condition: succeededOrFailed()
+
+  # -------    Debain Pipelines end here ------------------
 
   - job: RHELBuilds
     strategy:
