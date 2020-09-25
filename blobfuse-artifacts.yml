@@ -83,7 +83,7 @@ jobs:
 
   # -------    Ubuntu Pipelines end here ------------------
   
-  - job: set_2
+  - job: Set_2
 
     strategy:
       matrix:
