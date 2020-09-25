@@ -257,8 +257,7 @@ jobs:
           cd blobfuse
           mkdir $(Build.ArtifactStagingDirectory)/$(DistroVer)
           ./generaterpm.sh -srcdir ../build -distrover $(DistroVer)
-          pwd
-          mv ./blobfuse-*-*.rpm ./`../build/blobfuse -v | tr ' ' '-'`-$(DistroVer)-x86_64.deb
+          mv ./blobfuse-*.*.*.rpm ./`../build/blobfuse -v | tr ' ' '-'`-$(DistroVer)-x86_64.rpm
           cp ./blobfuse-*-*.rpm  $(Build.ArtifactStagingDirectory)/$(DistroVer)
         displayName: "Build the RPM"
         workingDirectory: $(ROOT_DIR)
