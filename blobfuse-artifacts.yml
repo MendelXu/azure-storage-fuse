@@ -87,7 +87,7 @@ jobs:
 
     strategy:
       matrix:
-        DEB9.0:
+        Debian9.0:
           DistroVer: "Debian9.0"
           AgentName : "DEB 9.0"
           Description: "Debian Linux 9.0"
@@ -172,12 +172,12 @@ jobs:
           AgentName: "RHEL 8.2"
           Description: "Red Hat Enterprise Linux 8.2"
           SignRequired: 1
-        COS8.0:
+        CentOS8.0:
           DistroVer: "CentOS-8.0"
           AgentName: "COS 8.0"
           Description: "CentOS Linux 8.0"
           SignRequired: 0
-        ORA8.1:
+        Oracle8.1:
           DistroVer: "Oracle-8.1"
           AgentName: "ORA 8.1"
           Description: "Oracle Linux 8.1 Gen 2"
