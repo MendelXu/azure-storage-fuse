@@ -185,10 +185,10 @@ stages:
             AgentName: "ORA 8.1"
             Description: "Oracle Linux 8.1 Gen 2"
 
-          RHEL-7.5:
-            DistroVer: "RHEL-7.5"
-            AgentName : "RHEL 7.5"
-            Description: "Red Hat Enterprise Linux 7.5"
+          # RHEL-7.5:
+          #   DistroVer: "RHEL-7.5"
+          #   AgentName : "RHEL 7.5"
+          #   Description: "Red Hat Enterprise Linux 7.5"
 
           RHEL-7.8:
             DistroVer: "RHEL-7.8"
@@ -451,6 +451,11 @@ stages:
             AgentName : "RHEL 7.8"
             Description: "Red Hat Enterprise Linux 7.8"
 
+          RHEL-7.5:
+            DistroVer: "RHEL-7.5"
+            AgentName : "RHEL 7.5"
+            Description: "Red Hat Enterprise Linux 7.5"
+
       pool:
         name: "Blobfuse Pool"
         demands:
@@ -477,7 +482,7 @@ stages:
 
         # Install all dependencies
         - script: |
-            sudo yum install git tar make cmake gcc gcc-c++ curl-devel gnutls-devel libuuid-devel boost-devel libgcrypt-devel rpm-build -y
+            sudo yum install git tar make cmake gcc gcc-c++ openssl-devel libcurl-devel cmake3 gnutls-devel libuuid-devel boost-devel libgcrypt-devel rpm-build -y
           displayName: "Basic Tools Setup"
 
         # Install libfuse
@@ -514,7 +519,7 @@ stages:
         # Build the blobFuse binary
         - script: |
             sudo chmod +x build.sh
-            . ./build.sh
+            . ./build.sh -d rhel7.5
           displayName: "Build BlobFuse"
           workingDirectory: $(ROOT_DIR)
 
