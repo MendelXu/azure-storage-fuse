@@ -52,6 +52,21 @@ else
 	fi
 fi
 
+while getopts d:f: option
+do
+case "${option}"
+in
+d) distro=${OPTARG}
+if [ "$distro" = "centos7.8" -o "$distro" = "centos7.5" ]
+then
+	echo "Linux version centos"
+    cmake_args="${cmake_args} -DCMAKE_C_COMPILER=$(source scl_source enable devtoolset-4 && which gcc) -DCMAKE_CXX_COMPILER=$(source scl_source enable devtoolset-4 && which g++)"
+fi
+ ;;
+f) FORMAT=${OPTARG};;
+esac
+done
+echo $cmake_args
 ## Use cmake3 if it's available.  If not, then fallback to the default "cmake".  Otherwise, fail.
 cmake3 $cmake_args
 if [ $? -ne 0 ]
