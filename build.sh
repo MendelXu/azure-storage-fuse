@@ -16,7 +16,25 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_ADLS=ON -DUSE_OPENSSL=OFF
 else
 mkdir cpplite/build.release
 cd cpplite/build.release
-cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ADLS=ON -DUSE_OPENSSL=OFF
+# add this temporarily just for testing open ssl
+while getopts d:f: option
+do
+case "${option}"
+in
+d) distro=${OPTARG}
+if [ "$distro" = "rhel7.8" -o "$distro" = "rhel7.5" ]
+then
+	echo "Linux version rhel 7"
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ADLS=ON -DUSE_OPENSSL=ON
+else
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ADLS=ON -DUSE_OPENSSL=OFF
+fi
+ ;;
+f) FORMAT=${OPTARG};;
+esac
+done
+#uncomment this after fixing the other problem with rhel7.5 and rhel 7.8.
+#cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ADLS=ON -DUSE_OPENSSL=OFF
 fi
 
 cmake --build .
