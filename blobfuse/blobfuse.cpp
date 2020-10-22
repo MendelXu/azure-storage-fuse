@@ -850,6 +850,12 @@ int read_and_set_arguments(int argc, char *argv[], struct fuse_args *args)
 
 int configure_tls()
 {
+    
+#ifdef USE_OPENSSL
+    #CRYPTO_set_id_callback(thread_id);
+    #CRYPTO_set_locking_callback(lock_callback);
+    SSL_library_init();
+#else 
     // For proper locking, instructing gcrypt to use pthreads 
     gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread);
     if(GNUTLS_E_SUCCESS != gnutls_global_init())
@@ -858,6 +864,8 @@ int configure_tls()
         fprintf(stderr, "GnuTLS initialization failed: errno = %d.\n", errno);
         return 1; 
     }
+#endif
+    
     return 0;
 }
 
