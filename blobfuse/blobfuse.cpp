@@ -848,7 +848,7 @@ int read_and_set_arguments(int argc, char *argv[], struct fuse_args *args)
     return 0;
 }
 
-int configure_tls()
+/* int configure_tls()
 {
     
 #ifdef USE_OPENSSL
@@ -867,7 +867,7 @@ int configure_tls()
 #endif
     
     return 0;
-}
+} */
 
 void configure_fuse(struct fuse_args *args)
 {
