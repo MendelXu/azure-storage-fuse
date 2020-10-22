@@ -185,10 +185,10 @@ stages:
             AgentName: "ORA 8.1"
             Description: "Oracle Linux 8.1 Gen 2"
 
-          # RHEL-7.5:
-          #   DistroVer: "RHEL-7.5"
-          #   AgentName : "RHEL 7.5"
-          #   Description: "Red Hat Enterprise Linux 7.5"
+          RHEL-7.5:
+            DistroVer: "RHEL-7.5"
+            AgentName : "RHEL 7.5"
+            Description: "Red Hat Enterprise Linux 7.5"
 
           RHEL-7.8:
             DistroVer: "RHEL-7.8"
@@ -254,9 +254,16 @@ stages:
         # Checkout code
         - script: |
             git clone https://github.com/Azure/azure-storage-fuse
-          displayName: "Checkout code"
+          displayName: "Git Clone Repo"
           workingDirectory: $(WORK_DIR)
 
+        # Checkout branch
+        - script: |
+            echo $(Build.SourceBranch)
+            echo "Going for checkout of " `echo $(Build.SourceBranch) | cut -d "/" -f 1,2 --complement`  
+            git checkout `echo $(Build.SourceBranch) | cut -d "/" -f 1,2 --complement`   
+          displayName: "Checkout Branch"
+          workingDirectory: $(ROOT_DIR)
 
         # List commits consumed for this build
         - script: |
@@ -377,9 +384,16 @@ stages:
         # Checkout code
         - script: |
             git clone https://github.com/Azure/azure-storage-fuse
-          displayName: "Checkout code"
+          displayName: "Git Clone Repo"
           workingDirectory: $(WORK_DIR)
 
+        # Checkout branch
+        - script: |
+            echo $(Build.SourceBranch)
+            echo "Going for checkout of " `echo $(Build.SourceBranch) | cut -d "/" -f 1,2 --complement`  
+            git checkout `echo $(Build.SourceBranch) | cut -d "/" -f 1,2 --complement`   
+          displayName: "Checkout Branch"
+          workingDirectory: $(ROOT_DIR)
 
         # List commits consumed for this build
         - script: |
@@ -505,9 +519,16 @@ stages:
         # Checkout code
         - script: |
             git clone https://github.com/Azure/azure-storage-fuse
-          displayName: "Checkout code"
+          displayName: "Git Clone Repo"
           workingDirectory: $(WORK_DIR)
 
+        # Checkout branch
+        - script: |
+            echo $(Build.SourceBranch)
+            echo "Going for checkout of " `echo $(Build.SourceBranch) | cut -d "/" -f 1,2 --complement`  
+            git checkout `echo $(Build.SourceBranch) | cut -d "/" -f 1,2 --complement`   
+          displayName: "Checkout Branch"
+          workingDirectory: $(ROOT_DIR)
 
         # List commits consumed for this build
         - script: |
