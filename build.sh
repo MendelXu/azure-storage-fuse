@@ -86,6 +86,21 @@ else
 	fi
 fi
 
+while getopts d:f: option
+do
+case "${option}"
+in
+d) distro=${OPTARG}
+if [ "$distro" = "rhel7.8" -o "$distro" = "rhel7.5" ]
+then
+	echo "Linux version rhel 7"
+    cmake_args="${cmake_args} -DUSE_OPENSSL"
+fi
+ ;;
+f) FORMAT=${OPTARG};;
+esac
+done
+
 ## Use cmake3 if it's available.  If not, then fallback to the default "cmake".  Otherwise, fail.
 cmake3 $cmake_args
 if [ $? -ne 0 ]
