@@ -12,7 +12,22 @@ then
 mkdir cpplite/build.release
 cd cpplite/build.release
 echo "Building cpplite in Debug mode"
-cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_ADLS=ON -DUSE_OPENSSL=OFF
+while getopts d:f: option
+do
+case "${option}"
+in
+d) distro=${OPTARG}
+if [ "$distro" = "rhel7.8" -o "$distro" = "rhel7.5" ]
+then
+	echo "Linux version rhel 7"
+    cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_ADLS=ON -DUSE_OPENSSL=ON
+else
+    cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_ADLS=ON -DUSE_OPENSSL=OFF
+fi
+ ;;
+f) FORMAT=${OPTARG};;
+esac
+done
 else
 mkdir cpplite/build.release
 cd cpplite/build.release
@@ -27,6 +42,7 @@ then
 	echo "Linux version rhel 7"
     cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ADLS=ON -DUSE_OPENSSL=ON
 else
+    echo "version other than rhel 7"
     cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ADLS=ON -DUSE_OPENSSL=OFF
 fi
  ;;
