@@ -71,6 +71,7 @@ elseif( EXISTS "/etc/debian_version" )
   # for redhat or oracle or CentOS just set BOOST OFF because /etc/os-release will always exist
 elseif( EXISTS "/etc/os-release")
   set(Boost_USE_STATIC_LIBS OFF)
+  option(USE_OPENSSL "USE OpenSSL instead of GnuTLS for RHEL centos and Oracle" ON)
 endif()
 
 if(UNIX)
@@ -109,6 +110,7 @@ if(UNIX)
   add_executable(blobfuse ${BLOBFUSE_HEADER} ${BLOBFUSE_SOURCE} blobfuse/main.cpp)
 
   if(USE_OPENSSL)
+    target_compile_definitions(blobfuse PRIVATE _DUSE_OPENSSL)
     target_link_libraries(blobfuse azure-storage-adls azure-storage-lite ${CURL_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto ${CMAKE_THREAD_LIBS_INIT} ${UUID_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} fuse gcrypt)
   else()
     target_link_libraries(blobfuse azure-storage-adls azure-storage-lite ${CURL_LIBRARIES} ${GNUTLS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${UUID_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} fuse gcrypt)
@@ -190,6 +192,11 @@ if(INCLUDE_TESTS)
   include_directories(${Boost_INCLUDE_DIR})
   add_executable(blobfusetests ${BLOBFUSE_HEADER} ${BLOBFUSE_SOURCE} blobfuse/blobfuse.cpp test/cpplitetests.cpp test/attribcachetests.cpp test/attribcachesynchronizationtests.cpp test/oauthtokentests.cpp test/oauthtokencredentialmanagertests.cpp)
   link_directories(${CMAKE_SOURCE_DIR}/cpplite/build.release)
-  target_link_libraries(blobfusetests azure-storage-adls azure-storage-lite ${CURL_LIBRARIES} ${GNUTLS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${UUID_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY}  fuse gcrypt gmock_main)
+  if(USE_OPENSSL)
+    target_link_libraries(blobfusetests azure-storage-adls azure-storage-lite ${CURL_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto ${CMAKE_THREAD_LIBS_INIT} ${UUID_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} fuse gcrypt gmock_main)
+  else()
+    target_link_libraries(blobfusetests azure-storage-adls azure-storage-lite ${CURL_LIBRARIES} ${GNUTLS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${UUID_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY}  fuse gcrypt gmock_main)
+  endif()
+  
 
 endif()
