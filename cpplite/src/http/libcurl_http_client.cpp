@@ -12,6 +12,7 @@ namespace azure { namespace storage_lite {
             check_code(curl_easy_setopt(m_curl, CURLOPT_NOSIGNAL, 1L));
             check_code(curl_easy_setopt(m_curl, CURLOPT_HEADERFUNCTION, header_callback));
             check_code(curl_easy_setopt(m_curl, CURLOPT_HEADERDATA, this));
+            check_code(curl_easy_setopt(m_curl, CURLOPT_VERBOSE, 1L));
         }
 
         CurlEasyRequest::~CurlEasyRequest()
