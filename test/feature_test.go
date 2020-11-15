@@ -473,7 +473,6 @@ func TestFileCreateMulti(t *testing.T) {
 			t.Errorf("Failed to create file " + newFile + " (" + err.Error() + ")")
 		}
 	}
-
 }
 
 // # Delete single files
@@ -599,14 +598,17 @@ func TestLinkDeleteReadTarget(t *testing.T) {
 	}
 }
 
+
+
 // # Delete a symlink to a file
 func TestLinkDelete(t *testing.T) {
 	/*symName := mntPath + "/small.lnk"
 	err := os.Remove(symName)
 	if err != nil {
 		t.Errorf("Failed to delete symlink " + symName + " (" + err.Error() + ")")
-	}*/
+	}*/	
 }
+
 
 // -------------- Main Method to start the Testing -------------------
 
@@ -630,6 +632,10 @@ func TestMain(m *testing.M) {
 	rand.Read(minBuff)
 	rand.Read(medBuff)
 	rand.Read(hugeBuff)
+
+	cacheTestFileName := mntPath + "cacheTestFile.txt"
+	os.create(cacheTestFileName)
+	ioutil.WriteFile(cacheTestFileName, minBuff, 0777)
 
 	// Run the actual feature test
 	m.Run()
