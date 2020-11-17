@@ -540,7 +540,7 @@ stages:
         # Build the blobFuse binary
         - script: |
             sudo chmod +x build.sh
-            . ./build.sh -d rhel7.5
+            . ./build.sh
           displayName: "Build BlobFuse"
           workingDirectory: $(ROOT_DIR)
 
