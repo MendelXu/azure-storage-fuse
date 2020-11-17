@@ -65,7 +65,6 @@ namespace azure { namespace storage_lite {
             m_slist = curl_slist_append(m_slist, "Transfer-Encoding:");
             m_slist = curl_slist_append(m_slist, "Expect:");
             check_code(curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, m_slist));
-            check_code(curl_easy_setopt(m_curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_SSLv3));
 
             if (!m_client->get_capath().empty())
             {
