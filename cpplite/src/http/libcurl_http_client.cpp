@@ -12,7 +12,7 @@ namespace azure { namespace storage_lite {
             
             FILE *filep = fopen("blobfuse_curl_output", "wb");
             check_code(curl_easy_setopt(m_curl, CURLOPT_STDERR, filep));
-            check_code(curl_easy_setopt(m_curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2));
+            check_code(curl_easy_setopt(m_curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1));
             check_code(curl_easy_setopt(m_curl, CURLOPT_NOSIGNAL, 1L));
             check_code(curl_easy_setopt(m_curl, CURLOPT_HEADERFUNCTION, header_callback));
             check_code(curl_easy_setopt(m_curl, CURLOPT_HEADERDATA, this));
